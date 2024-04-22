@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users'
+    'rest_framework',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,14 @@ MEDIA_ROOT = 'media'
 
 
 AUTH_USER_MODEL = "users.User"
+
+REST_FRAMEWORK =  {
+    "DEFAULT_AUTHENTICATION_CLASSES" : (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+from datetime import timedelta
+SIMLPE_JWT = {
+    'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
+}
