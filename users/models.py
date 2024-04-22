@@ -33,3 +33,6 @@ class User (AbstractUser) :
     def __str__(self) -> str:
         return self.full_name
     
+    @staticmethod
+    def get_leaders ():
+        return User.objects.order_by('-points')[:5].values('full_name','points')

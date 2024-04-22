@@ -25,12 +25,14 @@ SECRET_KEY = 'django-insecure-v2vaec8iud2zb^2yv841n%a6n&l@=zocz^!)y-%r7s+dah8r5q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'users',
+    'battle',
 ]
 
 MIDDLEWARE = [
@@ -70,7 +73,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
-
+ASGI_APPLICATION = 'backend.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -139,4 +142,10 @@ REST_FRAMEWORK =  {
 from datetime import timedelta
 SIMLPE_JWT = {
     'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
