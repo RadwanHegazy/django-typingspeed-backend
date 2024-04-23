@@ -1,6 +1,7 @@
-from django.urls import re_path
-from .consumers import SearchBattle
+from django.urls import path
+from .consumers import SearchBattle, BattleConsumer
 
-ws_urlpatterns = [
-    re_path('ws/battle/search/',SearchBattle.as_asgi()),
+websocket_urlpatterns = [
+    path('ws/battle/search/',SearchBattle.as_asgi()),
+    path('ws/battle/get/<str:battle_id>/',BattleConsumer.as_asgi()),
 ]

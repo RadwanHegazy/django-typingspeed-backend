@@ -39,6 +39,19 @@ class Battle(models.Model) :
         }
     
 
+    @staticmethod
+    def get_avaliable_battles(user) :
+        data = {
+            'has_battle':False
+        }
+        for battle in Battle.objects.filter(winner=None).order_by('created_at') :
+            if battle.users.count() == 1 and user not in battle.users.all():
+                battle.users.add(user)
+                battle.save()
+                data['battle_id'] = str(battle.id)
+                data['has_battle'] = True
+                break
+        return data
 
 @receiver(post_save,sender=Battle)
 def generate_battle_text (created,instance:Battle,**kwargs) : 
