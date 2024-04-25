@@ -11,7 +11,7 @@ class SearchBattle (WebsocketConsumer):
         
         self.accept()
         get_battle:dict = Battle.get_avaliable_battles(self.user)
-        
+    
         self.send(
             text_data=json.dumps(get_battle)
         )
@@ -41,19 +41,21 @@ class BattleConsumer (WebsocketConsumer) :
         self.ROOM_GROUP = f"battle_{self.battle.id}"
         
         
-        if self.user not in self.battle.users.all() or self.battle.users.count() != 2 :#or self.battle.winner is not None:
+        if self.user not in self.battle.users.all() :
             self.close()
             return
         
+            
+        
         self.accept()
-        self.battle_body = self.battle.text        
-        print(self.battle_body)
-
+        self.battle_body = self.battle.text   
+        
         async_to_sync(self.channel_layer.group_add)(
             self.ROOM_GROUP,
             self.channel_name
         )
 
+                    
     def disconnect(self, code):
         async_to_sync(self.channel_layer.group_discard)(
             self.ROOM_GROUP,
@@ -68,7 +70,6 @@ class BattleConsumer (WebsocketConsumer) :
         # check the char on the body of the battle
         if data_type == 'char' : 
             char = data['char']
-
             if self.current_char_idx == len(self.battle_body) - 1 :
                 winner_txt = f'الفائز هو : {self.user.full_name}'
 
@@ -95,3 +96,8 @@ class BattleConsumer (WebsocketConsumer) :
 
     def win (self, event) :
         self.send(text_data=json.dumps(event['event']))
+        self.battle.delete()
+
+    def start (self,event) :
+
+        self.send(text_data=event['event'])
