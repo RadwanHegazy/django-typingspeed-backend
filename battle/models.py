@@ -25,7 +25,7 @@ class Battle(models.Model) :
         for user in self.users.all() : 
             if user == me :
                 data['me'] = self.serialize_user(user)
-            else:
+            elif user != me and user is not None:
                 data['friend'] = self.serialize_user(user)
                 
         return data
@@ -41,21 +41,24 @@ class Battle(models.Model) :
 
     @staticmethod
     def get_avaliable_battles(user) :
-        data = {
-            'has_battle':False
-        }
+        data = {}
         for battle in Battle.objects.filter(winner=None).order_by('created_at') :
             if battle.users.count() == 1 and user not in battle.users.all():
                 battle.users.add(user)
                 battle.save()
                 data['battle_id'] = str(battle.id)
-                data['has_battle'] = True
                 break
+
+        if len(data) == 0 :
+            battle = Battle.objects.create()
+            battle.users.add(user)
+            battle.save()
+            data['battle_id'] = str(battle.id)
         return data
 
 @receiver(post_save,sender=Battle)
 def generate_battle_text (created,instance:Battle,**kwargs) : 
     if created :
         doc = DocumentGenerator()
-        instance.text = doc.paragraph(min_sentences=5,max_sentences=15)
+        instance.text = doc.paragraph(min_sentences=1,max_sentences=2)
         instance.save()
